@@ -1,6 +1,9 @@
 const { SMS_ID, SMS_TOKEN, SMS_FROM_NUM, DEV_NUM_1, DEV_NUM_2 } = process.env;
 const client = require("twilio")(SMS_ID, SMS_TOKEN);
 
+/**
+ * Sends updates via Twilio
+ */
 const sendUpdate = async (odds) => {
   console.log("Sending sms update");
   const body = `
