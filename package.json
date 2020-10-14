@@ -7,7 +7,8 @@
     "start": "echo \"No web presence\"",
     "worker:up": "heroku ps:scale worker=1",
     "worker:down": "heroku ps:scale worker=0",
-    "worker:reset": "npm run worker:down && npm run worker:up"
+    "worker:reset": "npm run worker:down && npm run worker:up",
+    "logs": "heroku logs --tail"
   },
   "keywords": [
     "538",
