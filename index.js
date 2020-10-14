@@ -82,5 +82,5 @@ const checkPolls = async () => {
   }
 };
 
-checkPolls();
+// Check polls every X milliseconds
 setInterval(checkPolls, CONSTANTS.INTERVAL_TIME);
