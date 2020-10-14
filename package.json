@@ -1,0 +1,21 @@
+{
+  "name": "538-update",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "538",
+    "election",
+    "polls"
+  ],
+  "author": "Justin Kunz",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "node-cache": "^5.1.2",
+    "twilio": "^3.49.4"
+  }
+}
