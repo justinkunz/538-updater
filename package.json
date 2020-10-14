@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "echo \"No web presence\"",
     "worker:up": "heroku ps:scale worker=1",
     "worker:down": "heroku ps:scale worker=0",
     "worker:reset": "npm run worker:down && npm run worker:up"
