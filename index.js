@@ -82,5 +82,5 @@ const checkPolls = async () => {
   }
 };
 
-//
+checkPolls();
 setInterval(checkPolls, CONSTANTS.INTERVAL_TIME);
