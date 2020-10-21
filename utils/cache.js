@@ -1,5 +1,6 @@
 const NodeCache = require('node-cache');
-const { alertThreshold } = require('../config.json');
+const config = require('../config.json');
+const logger = require('./logger');
 const nodeCache = new NodeCache();
 
 class Cache {
@@ -19,8 +20,8 @@ class Cache {
   // Check if difference in current odds & cached odds surpass alertThreshold
   isPastThreshold(odds, type) {
     return (
-      Math.abs(this.biden[type] - odds[type].Biden) >= alertThreshold[type] ||
-      Math.abs(this.trump[type] - odds[type].Trump) >= alertThreshold[type]
+      Math.abs(this.biden[type] - odds[type].Biden) >= config.alertThreshold[type] ||
+      Math.abs(this.trump[type] - odds[type].Trump) >= config.alertThreshold[type]
     );
   }
 
@@ -29,14 +30,20 @@ class Cache {
     return nodeCache.get(this.#biden);
   }
   set biden(val) {
+    logger.info(
+      `Updating Biden's Odds. National: ${this.biden.national}% -> ${val.national}% & State (${config.state}): ${this.biden.state} -> ${val.state}`
+    );
     return nodeCache.set(this.#biden, val);
   }
 
-  // Trump
+  // Trump∂
   get trump() {
     return nodeCache.get(this.#trump);
   }
   set trump(val) {
+    logger.info(
+      `Updating Trump's Odds. National: ${this.trump.national}% -> ${val.national}% & State (${config.state}): ${this.trump.state} -> ${val.state}`
+    );
     return nodeCache.set(this.#trump, val);
   }
 }

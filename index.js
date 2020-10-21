@@ -33,12 +33,12 @@ const checkOdds = async () => {
 
       // Set cache
       cache.biden = {
-        national: alertNationalOdds ? odds.national.Biden : cache.biden.national,
-        state: alertStateOdds ? odds.state.Biden : cache.biden.state,
+        national: odds.national.Biden,
+        state: odds.state.Biden,
       };
       cache.trump = {
-        national: alertNationalOdds ? odds.national.Trump : cache.trump.national,
-        state: alertStateOdds ? odds.state.Trump : cache.trump.state,
+        national: odds.national.Trump,
+        state: odds.state.Trump,
       };
 
       // Send SMS Update
@@ -47,7 +47,7 @@ const checkOdds = async () => {
       logger.info('Odds have not changed');
     }
   } catch (err) {
-    logger.error('An error occurred', err.toString());
+    logger.error('An error occurred', err);
   }
 };
 

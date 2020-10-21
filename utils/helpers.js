@@ -44,7 +44,6 @@ State (TX):
 const sendSMSUpdate = async (odds) => {
   logger.info('Sending sms update');
   const body = getSMSBody(odds);
-
   const phoneNumbers = PHONE_NUMBERS.split(';');
   await Promise.all(phoneNumbers.map((to) => client.messages.create({ body, from, to })));
 
