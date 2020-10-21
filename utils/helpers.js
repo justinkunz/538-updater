@@ -2,6 +2,7 @@ const { SMS_ID, SMS_TOKEN, SMS_FROM_NUM: from, PHONE_NUMBERS } = process.env;
 
 const client = require('twilio')(SMS_ID, SMS_TOKEN);
 const logger = require('./logger');
+const config = require('../config.json');
 
 /**
  * Determine win odds per canidate
@@ -30,7 +31,7 @@ FiveThirtyEight's 2020 Election odds have updated
     ‣ Biden: ${odds.national.Biden}%
     ‣ Trump: ${odds.national.Trump}%
 
-State (TX):
+State (${config.state}):
     ‣ Biden: ${odds.state.Biden}%
     ‣ Trump: ${odds.state.Trump}%
 
