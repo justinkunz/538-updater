@@ -1,48 +1,45 @@
-const NodeCache = require("node-cache");
+const NodeCache = require('node-cache');
+const { alertThreshold } = require('../config.json');
 const nodeCache = new NodeCache();
 
 class Cache {
-  #bidenNatKey;
-  #trumpNatKey;
-  #bidenStateKey;
-  #trumpStateKey;
+  #biden;
+  #trump;
   constructor() {
-    this.#bidenNatKey = "odds_biden_nat";
-    this.#trumpNatKey = "odds_trump_nat";
-    this.#bidenStateKey = "odds_biden_state";
-    this.#trumpStateKey = "odds_trump_state";
+    this.#biden = 'odds_biden';
+    this.#trump = 'odds_trump';
+
+    const defaultOdds = { national: 0, state: 0 };
+
+    // Set initial odds value
+    nodeCache.set(this.#biden, defaultOdds);
+    nodeCache.set(this.#trump, defaultOdds);
   }
 
-  get bidenNatOdds() {
-    return nodeCache.get(this.#bidenNatKey);
+  // Check if difference in current odds & cached odds surpass alertThreshold
+  isPastThreshold(odds) {
+    return (
+      Math.abs(this.biden.national - odds.national.Biden) >= alertThreshold.national ||
+      Math.abs(this.trump.national - odds.national.Trump) >= alertThreshold.national ||
+      Math.abs(this.biden.state - odds.state.Biden) >= alertThreshold.state ||
+      Math.abs(this.trump.state - odds.state.Trump) >= alertThreshold.state
+    );
   }
 
-  set bidenNatOdds(val) {
-    return nodeCache.set(this.#bidenNatKey, val);
+  // Biden
+  get biden() {
+    return nodeCache.get(this.#biden);
+  }
+  set biden(val) {
+    return nodeCache.set(this.#biden, val);
   }
 
-  get trumpNatOdds() {
-    return nodeCache.get(this.#trumpNatKey);
+  // Trump
+  get trump() {
+    return nodeCache.get(this.#trump);
   }
-
-  set trumpNatOdds(val) {
-    return nodeCache.set(this.#trumpNatKey, val);
-  }
-
-  get bidenStateOdds() {
-    return nodeCache.get(this.#bidenStateKey);
-  }
-
-  set bidenStateOdds(val) {
-    return nodeCache.set(this.#bidenStateKey, val);
-  }
-
-  get trumpStateOdds() {
-    return nodeCache.get(this.#trumpStateKey);
-  }
-
-  set trumpStateOdds(val) {
-    return nodeCache.set(this.#trumpStateKey, val);
+  set trump(val) {
+    return nodeCache.set(this.#trump, val);
   }
 }
 

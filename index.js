@@ -1,86 +1,50 @@
-require("dotenv").config();
-const axios = require("axios");
-const Cache = require("./utils/cache");
-const sms = require("./utils/sms");
-const CONSTANTS = require("./constants");
+require('dotenv').config();
+const { API, Cache, utils } = require('./utils');
+const config = require('./config.json');
 
 const cache = new Cache();
 
 /**
- * Call to 538 API
- */
-const getFTEPolls = async () => {
-  const { data: ftePolls } = await axios.get(CONSTANTS.FTE_SIMULATIONS_URL);
-  const { simulations } = ftePolls[0];
-  return simulations.map((sim) => ({
-    ...sim,
-    outcome: sim.evs,
-  }));
-};
-
-/**
- * Checks if odds from latest result are different than cached results
- *
- * @param {Object} odds Odds object
- */
-const haveOddsChanged = (odds) =>
-  cache.bidenNatOdds !== odds.national.Biden ||
-  cache.trumpNatOdds !== odds.national.Trump ||
-  cache.bidenStateOdds !== odds.state.Biden ||
-  cache.trumpStateOdds !== odds.state.Trump;
-
-/**
- * Sets cache (avoids sending duplicate update)
- *
- * @param {Object} odds Odds object
- */
-const setOddsCache = (odds) => {
-  cache.bidenNatOdds = odds.national.Biden;
-  cache.trumpNatOdds = odds.national.Trump;
-  cache.bidenStateOdds = odds.state.Biden;
-  cache.trumpStateOdds = odds.state.Trump;
-};
-
-/**
- * Determine win odds per canidate
- *
- * @param {Array} simulations 538 Simulations
- */
-const calculateOdds = (simulations) =>
-  simulations.reduce((acc, { winner }) => {
-    if (Object.prototype.hasOwnProperty.call(acc, winner)) {
-      acc[winner]++;
-    } else {
-      acc[winner] = 1;
-    }
-    return acc;
-  }, {});
-
-/**
  * Main function
- * - Checks 538 polls
- * - Sends SMS updates if polls have updated
+ * - Checks 538 simulations
+ * - Sends SMS updates if odds have updated
  */
-const checkPolls = async () => {
+const checkOdds = async () => {
   try {
-    console.log("Checking Polls");
-    const polls = await getFTEPolls();
+    console.log('Checking Simulations');
+
+    // Get current simulations
+    const simulations = await API.getFteSimulations();
+
+    // Caculate odds
     const odds = {
-      national: calculateOdds(polls),
-      state: calculateOdds(polls.map((sim) => sim.states[CONSTANTS.STATE])),
+      national: utils.calculateOdds(simulations),
+      state: utils.calculateOdds(simulations.map((sim) => sim.states[config.state])),
     };
 
-    if (haveOddsChanged(odds)) {
-      console.log("Odds have changed, updating cache");
-      setOddsCache(odds);
-      await sms.sendUpdate(odds);
+    // Compare new odds to config threshold
+    if (cache.isPastThreshold(odds)) {
+      console.log('Odds have changed, updating cache');
+
+      // Set cache
+      cache.biden = {
+        national: odds.national.Biden,
+        state: odds.state.Biden,
+      };
+      cache.trump = {
+        national: odds.national.Trump,
+        state: odds.state.Trump,
+      };
+
+      // Send SMS Update
+      await utils.sendSMSUpdate(odds);
     } else {
-      console.log("Odds have not changed");
+      console.log('Odds have not changed');
     }
   } catch (err) {
-    console.error("An error occurred", err.toString());
+    console.error('An error occurred', err.toString());
   }
 };
 
-// Check polls every X milliseconds
-setInterval(checkPolls, CONSTANTS.INTERVAL_TIME);
+// Check simulations every X milliseconds
+setInterval(checkOdds, config.intervalTime);
