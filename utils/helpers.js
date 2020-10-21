@@ -1,5 +1,7 @@
-const { SMS_ID, SMS_TOKEN, SMS_FROM_NUM: from, DEV_NUM_1, DEV_NUM_2, PHONE_NUMBERS } = process.env;
+const { SMS_ID, SMS_TOKEN, SMS_FROM_NUM: from, PHONE_NUMBERS } = process.env;
+
 const client = require('twilio')(SMS_ID, SMS_TOKEN);
+const logger = require('./logger');
 
 /**
  * Determine win odds per canidate
@@ -40,13 +42,13 @@ State (TX):
  * @param {Object} odds Updated election forecast
  */
 const sendSMSUpdate = async (odds) => {
-  console.log('Sending sms update');
+  logger.info('Sending sms update');
   const body = getSMSBody(odds);
 
   const phoneNumbers = PHONE_NUMBERS.split(';');
   await Promise.all(phoneNumbers.map((to) => client.messages.create({ body, from, to })));
 
-  console.log('Successfully sent sms update');
+  logger.info('Successfully sent sms update');
 };
 
 module.exports = { sendSMSUpdate, calculateOdds };

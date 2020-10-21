@@ -17,12 +17,10 @@ class Cache {
   }
 
   // Check if difference in current odds & cached odds surpass alertThreshold
-  isPastThreshold(odds) {
+  isPastThreshold(odds, type) {
     return (
-      Math.abs(this.biden.national - odds.national.Biden) >= alertThreshold.national ||
-      Math.abs(this.trump.national - odds.national.Trump) >= alertThreshold.national ||
-      Math.abs(this.biden.state - odds.state.Biden) >= alertThreshold.state ||
-      Math.abs(this.trump.state - odds.state.Trump) >= alertThreshold.state
+      Math.abs(this.biden[type] - odds[type].Biden) >= alertThreshold[type] ||
+      Math.abs(this.trump[type] - odds[type].Trump) >= alertThreshold[type]
     );
   }
 

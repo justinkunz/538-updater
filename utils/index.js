@@ -1,5 +1,6 @@
 const API = require('./api');
 const Cache = require('./cache');
-const utils = require('./utils');
+const helpers = require('./helpers');
+const logger = require('./logger');
 
-module.exports = { API, Cache, utils };
+module.exports = { API, Cache, helpers, logger };

@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { API, Cache, utils } = require('./utils');
+const { API, Cache, helpers, logger } = require('./utils');
 const config = require('./config.json');
 
 const cache = new Cache();
@@ -11,42 +11,47 @@ const cache = new Cache();
  */
 const checkOdds = async () => {
   try {
-    console.log('Checking Simulations');
+    logger.info('Checking Simulations');
 
     // Get current simulations
     const simulations = await API.getFteSimulations();
 
     // Caculate odds
     const odds = {
-      national: utils.calculateOdds(simulations),
-      state: utils.calculateOdds(simulations.map((sim) => sim.states[config.state])),
+      national: helpers.calculateOdds(simulations),
+      state: helpers.calculateOdds(simulations.map((sim) => sim.states[config.state])),
     };
 
-    // Compare new odds to config threshold
-    if (cache.isPastThreshold(odds)) {
-      console.log('Odds have changed, updating cache');
+    // Compare new national & state odds to config threshold
+    const [alertNationalOdds, alertStateOdds] = [
+      cache.isPastThreshold(odds, 'national'),
+      cache.isPastThreshold(odds, 'state'),
+    ];
+
+    if (alertNationalOdds || alertStateOdds) {
+      logger.info('Odds have changed, updating cache');
 
       // Set cache
       cache.biden = {
-        national: odds.national.Biden,
-        state: odds.state.Biden,
+        national: alertNationalOdds ? odds.national.Biden : cache.biden.national,
+        state: alertStateOdds ? odds.state.Biden : cache.biden.state,
       };
       cache.trump = {
-        national: odds.national.Trump,
-        state: odds.state.Trump,
+        national: alertNationalOdds ? odds.national.Trump : cache.trump.national,
+        state: alertStateOdds ? odds.state.Trump : cache.trump.state,
       };
 
       // Send SMS Update
-      await utils.sendSMSUpdate(odds);
+      await helpers.sendSMSUpdate(odds);
     } else {
-      console.log('Odds have not changed');
+      logger.info('Odds have not changed');
     }
   } catch (err) {
-    console.error('An error occurred', err.toString());
+    logger.error('An error occurred', err.toString());
   }
 };
 
 // Check simulations every X milliseconds
 setInterval(checkOdds, config.intervalTime);
 
-console.log(`Set interval to check 538 odds every ${config.intervalTime}ms`);
+logger.info(`Set interval to check 538 odds every ${config.intervalTime}ms`);
