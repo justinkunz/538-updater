@@ -1,4 +1,4 @@
-const { SMS_ID, SMS_TOKEN, SMS_FROM_NUM, DEV_NUM_1, DEV_NUM_2 } = process.env;
+const { SMS_ID, SMS_TOKEN, SMS_FROM_NUM: from, DEV_NUM_1, DEV_NUM_2, PHONE_NUMBERS } = process.env;
 const client = require('twilio')(SMS_ID, SMS_TOKEN);
 
 /**
@@ -43,18 +43,10 @@ const sendSMSUpdate = async (odds) => {
   console.log('Sending sms update');
   const body = getSMSBody(odds);
 
-  // Can't bundle - Twilio gets mad. "Too many requests" >:(
-  await client.messages.create({
-    body,
-    from: SMS_FROM_NUM,
-    to: DEV_NUM_1,
-  });
+  const phoneNumbers = PHONE_NUMBERS.split(';');
+  await Promise.all(phoneNumbers.map((to) => client.messages.create({ body, from, to })));
 
-  await client.messages.create({
-    body,
-    from: SMS_FROM_NUM,
-    to: DEV_NUM_2,
-  });
+  console.log('Successfully sent sms update');
 };
 
 module.exports = { sendSMSUpdate, calculateOdds };

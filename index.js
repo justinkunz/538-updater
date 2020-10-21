@@ -48,3 +48,4 @@ const checkOdds = async () => {
 
 // Check simulations every X milliseconds
 setInterval(checkOdds, config.intervalTime);
+checkOdds();
