@@ -36,7 +36,7 @@ class Cache {
     return nodeCache.set(this.#biden, val);
   }
 
-  // Trump∂
+  // Trump
   get trump() {
     return nodeCache.get(this.#trump);
   }
