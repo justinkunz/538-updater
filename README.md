@@ -14,5 +14,4 @@ SMS_FROM_NUM=(Twilio from number)
 SMS_ID=(Twilio SMS ID)
 SMS_TOKEN=(Twilio SMS Token)
 PHONE_NUMBERS=(Phone Numbers, seperated by ";" - example: "3235554433;2145559988;4698887777")
-DEV_NUM_2=
 ```
