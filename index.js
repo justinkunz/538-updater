@@ -48,4 +48,5 @@ const checkOdds = async () => {
 
 // Check simulations every X milliseconds
 setInterval(checkOdds, config.intervalTime);
-checkOdds();
+
+console.log(`Set interval to check 538 odds every ${config.intervalTime}ms`);
