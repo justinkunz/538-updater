@@ -3,6 +3,6 @@
   "intervalTime": 300000,
   "alertThreshold": {
     "national": 1,
-    "state": 5
+    "state": 3
   }
 }
